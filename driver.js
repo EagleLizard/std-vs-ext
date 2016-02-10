@@ -1,10 +1,12 @@
 ;(function(){
-  var stdForEach = require('./forEach_std').run;
+  var stdForEach    = require('./forEach_std').run;
   var lodashForEach = require('./forEach_lodash').run;
-  var stdMap = require('./map_std').run;
-  var lodashMap = require('./map_lodash').run;
+  var stdMap        = require('./map_std').run;
+  var lodashMap     = require('./map_lodash').run;
+  var stdReverse    = require('./reverse_std').run;
+  var lodashReverse = require('./reverse_lodash').run;
 
-  var gen = require('./generator');
+  var gen      = require('./generator');
   var testFuns = require('./testFunctions');
 
   var _ = require('lodash');
@@ -15,14 +17,18 @@
     'forEach',
     '_forEach',
     'map',
-    '_map'
+    '_map',
+    'reverse',
+    '_reverse'
   ];
 
   var TEST_ID_ENUM = {
     FOR_EACH        : VALID_IDENTIFIERS[0],
     LODASH_FOR_EACH : VALID_IDENTIFIERS[1],
     MAP             : VALID_IDENTIFIERS[2],
-    LODASH_MAP      : VALID_IDENTIFIERS[3]
+    LODASH_MAP      : VALID_IDENTIFIERS[3],
+    REVERSE         : VALID_IDENTIFIERS[4],
+    LODASH_REVERSE  : VALID_IDENTIFIERS[5]
   };
 
   var INVALID_TEST_IDENTIFIER = "Invalid test identifier specified.";
@@ -47,17 +53,31 @@
 
     switch(testId){
       case 'forEach':
-        time = runTest(data, stdForEach, testFuns.forEachFuns[0]);
+        time = runTest(data,
+                       stdForEach,
+                       testFuns.forEachFuns[0]);
         break;
       case '_forEach':
-        time = runTest(data, lodashForEach, testFuns.forEachFuns[0]);
+        time = runTest(data,
+                       lodashForEach,
+                       testFuns.forEachFuns[0]);
         break;
       case 'map':
-        time = runTest(data, stdMap, testFuns.mapFuns[1]);
+        time = runTest(data,
+                       stdMap,
+                       testFuns.mapFuns[1]);
         break;
       case '_map':
-        time = runTest(data, lodashMap, testFuns.mapFuns[1]);
+        time = runTest(data,
+                       lodashMap,
+                       testFuns.mapFuns[1]);
         break;
+      case 'reverse':
+        time = runTest(data,
+                       stdReverse);
+      case '_reverse':
+        time = runTest(data,
+                       lodashReverse);
     }
     console.log('Time to process ', formatNumber(NUM_DATA), 'items (', testId, '):');
     console.log('\t>', formatNumber(time), 'ms');
