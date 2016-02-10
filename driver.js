@@ -1,12 +1,15 @@
 ;(function(){
   var stdForEach = require('./forEach_std').run;
   var lodashForEach = require('./forEach_lodash').run;
+  var stdMap = require('./map_std').run;
+  var lodashMap = require('./map_lodash').run;
+
   var gen = require('./generator');
   var testFuns = require('./testFunctions');
 
   var _ = require('lodash');
 
-  var NUM_DATA = 1e6;//6e7;
+  var NUM_DATA = 6e7;
 
   var VALID_IDENTIFIERS = [
     'forEach',
@@ -36,22 +39,24 @@
     });
 
     if(isValidTestId === -1){
-      console.log(INVALID_TEST_IDENTIFIER);
+      console.error(INVALID_TEST_IDENTIFIER);
       return;
     }
 
     data = gen.getRandomInts(NUM_DATA);
-    
+
     switch(testId){
       case 'forEach':
         time = runTest(data, stdForEach, testFuns.forEachFuns[0]);
         break;
       case '_forEach':
-        time = runTest(data, lodashForEach, testFuns.forEachFuns[1]);
+        time = runTest(data, lodashForEach, testFuns.forEachFuns[0]);
         break;
       case 'map':
+        time = runTest(data, stdMap, testFuns.mapFuns[1]);
         break;
       case '_map':
+        time = runTest(data, lodashMap, testFuns.mapFuns[1]);
         break;
     }
     console.log('Time to process ', formatNumber(NUM_DATA), 'items (', testId, '):');

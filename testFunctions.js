@@ -4,8 +4,14 @@
     accessAssignmentSubtraction
   ];
 
+  var mapFuns = [
+    indexModulo,
+    indexDecrement
+  ];
+
   module.exports = {
-    forEachFuns : forEachFuns
+    forEachFuns : forEachFuns,
+    mapFuns     : mapFuns
   };
 
   /*
@@ -20,6 +26,20 @@
 
   function increment(val, idx, arr){
     ++arr[idx];
+  }
+
+  /*
+    ----------------------------
+      MAP FUNCTION DEFINITIONS
+    ----------------------------
+  */
+
+  function indexModulo(val, idx){
+    return val%idx;
+  }
+
+  function indexDecrement(val, idx){
+    return val-idx;
   }
 
 })();
