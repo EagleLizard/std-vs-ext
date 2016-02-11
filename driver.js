@@ -1,17 +1,17 @@
 ;(function(){
-  var stdForEach    = require('./forEach_std').run;
-  var lodashForEach = require('./forEach_lodash').run;
-  var stdMap        = require('./map_std').run;
-  var lodashMap     = require('./map_lodash').run;
-  var stdReverse    = require('./reverse_std').run;
-  var lodashReverse = require('./reverse_lodash').run;
+  var stdForEach    = require('./handlers').forEach.std;
+  var lodashForEach = require('./handlers').forEach.lodash;
+  var stdMap        = require('./handlers').map.std;
+  var lodashMap     = require('./handlers').map.lodash;
+  var stdReverse    = require('./handlers').reverse.std;
+  var lodashReverse = require('./handlers').reverse.lodash;
 
   var gen      = require('./generator');
   var testFuns = require('./testFunctions');
 
   var _ = require('lodash');
 
-  var NUM_DATA = 6e7;
+  var NUM_DATA = 1e7;
 
   var VALID_IDENTIFIERS = [
     'forEach',
