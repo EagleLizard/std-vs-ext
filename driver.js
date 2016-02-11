@@ -11,7 +11,7 @@
 
   var _ = require('lodash');
 
-  var NUM_DATA = 1e7;
+  var DEFAULT_NUM_DATA = 1e7;
 
   var VALID_IDENTIFIERS = [
     'forEach',
@@ -33,57 +33,48 @@
 
   var INVALID_TEST_IDENTIFIER = "Invalid test identifier specified.";
 
+  var numData;
+
   main(process.argv[2]);
 
   function main(testId){
-    var data, isValidTestId, time;
+    var time;
 
-    console.log(testId);
-
-    isValidTestId = _.findIndex(VALID_IDENTIFIERS, function(id){
-      return id == testId;
-    });
-
-    if(isValidTestId === -1){
+    if(!isValidTestId(testId)){
       console.error(INVALID_TEST_IDENTIFIER);
       return;
     }
 
-    data = gen.getRandomInts(NUM_DATA);
+    numData = parseInt(Number(process.argv[3]), 10) || DEFAULT_NUM_DATA;
 
     switch(testId){
       case 'forEach':
-        time = runTest(data,
-                       stdForEach,
+        time = runTest(stdForEach,
                        testFuns.forEachFuns[0]);
         break;
       case '_forEach':
-        time = runTest(data,
-                       lodashForEach,
+        time = runTest(lodashForEach,
                        testFuns.forEachFuns[0]);
         break;
       case 'map':
-        time = runTest(data,
-                       stdMap,
+        time = runTest(stdMap,
                        testFuns.mapFuns[1]);
         break;
       case '_map':
-        time = runTest(data,
-                       lodashMap,
+        time = runTest(lodashMap,
                        testFuns.mapFuns[1]);
         break;
       case 'reverse':
-        time = runTest(data,
-                       stdReverse);
+        time = runTest(stdReverse);
       case '_reverse':
-        time = runTest(data,
-                       lodashReverse);
+        time = runTest(lodashReverse);
     }
-    console.log('Time to process ', formatNumber(NUM_DATA), 'items (', testId, '):');
+    console.log('Time to process ', formatNumber(numData), 'items (', testId, '):');
     console.log('\t>', formatNumber(time), 'ms');
   }
 
-  function runTest(data, fun, innerFun){
+  function runTest(fun, innerFun){
+    var data = gen.getRandomInts(numData);
     var start = _.now();
     fun(data, innerFun);
     return _.now() - start;
@@ -104,6 +95,12 @@
     });
 
     return newNum.reverse().join('');
+  }
+
+  function isValidTestId(testId){
+    return _.findIndex(VALID_IDENTIFIERS, function(id){
+      return id == testId;
+    }) !== -1;
   }
 
 })();
