@@ -6,8 +6,9 @@
     getRandomInts : getRandomInts
   };
 
-  function getRandomInts(n, min, max){
-    var ints = new Array(n);
+  function getRandomInts(n, min, max, recycledArr){
+    var ints = recycledArr || new Array(n);
+    n = (_.isUndefined(recycledArr))? n : recycledArr.length;
     for(var i=0; i<n; ++i){
       ints[i]= randInt(min, max);
     }

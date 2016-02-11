@@ -12,6 +12,7 @@
   var _ = require('lodash');
 
   var DEFAULT_NUM_DATA = 1e7;
+  var DEFAULT_NUM_TESTS = 1;
 
   var VALID_IDENTIFIERS = [
     'forEach',
@@ -33,7 +34,7 @@
 
   var INVALID_TEST_IDENTIFIER = "Invalid test identifier specified.";
 
-  var numData;
+  var numData, numTests;
 
   main(process.argv[2]);
 
@@ -45,36 +46,52 @@
       return;
     }
 
-    numData = parseInt(Number(process.argv[3]), 10) || DEFAULT_NUM_DATA;
+    numData  = parseInt(process.argv[3], 10) || DEFAULT_NUM_DATA;
+    numTests = parseInt(process.argv[4], 10) || DEFAULT_NUM_TESTS;
 
     switch(testId){
       case 'forEach':
-        time = runTest(stdForEach,
+        time = runTests(stdForEach,
                        testFuns.forEachFuns[0]);
         break;
       case '_forEach':
-        time = runTest(lodashForEach,
+        time = runTests(lodashForEach,
                        testFuns.forEachFuns[0]);
         break;
       case 'map':
-        time = runTest(stdMap,
+        time = runTests(stdMap,
                        testFuns.mapFuns[1]);
         break;
       case '_map':
-        time = runTest(lodashMap,
+        time = runTests(lodashMap,
                        testFuns.mapFuns[1]);
         break;
       case 'reverse':
-        time = runTest(stdReverse);
+        time = runTests(stdReverse);
+        break;
       case '_reverse':
-        time = runTest(lodashReverse);
+        time = runTests(lodashReverse);
+        break;
     }
-    console.log('Time to process ', formatNumber(numData), 'items (', testId, '):');
+    console.log('Avg. time to process ', formatNumber(numData), 'items over ',numTests,' tests (', testId, '):');
     console.log('\t>', formatNumber(time), 'ms');
   }
 
-  function runTest(fun, innerFun){
-    var data = gen.getRandomInts(numData);
+  function runTests(fun, innerFun){
+    var data;
+    var results = [];
+    for(var it=0; it<numTests; ++it){
+      results.push(runTest(fun, innerFun, data));
+      console.log('Test #', it+1, ' complete');
+    }
+    return _.reduce(results, function(acc, curr){
+      return acc+curr;
+    }, 0)/results.length;
+  }
+
+  function runTest(fun, innerFun, data){
+    var undef;
+    var data = gen.getRandomInts(numData, undef, Number.MAX_SAFE_INTEGER, data);
     var start = _.now();
     fun(data, innerFun);
     return _.now() - start;
@@ -83,18 +100,28 @@
   function formatNumber(num){
     var newNum = [];
     var numStr = ''.concat(num);
+    var dotIdx, splitNumber, mantissa;
     if(numStr.length <= 3){
       return numStr;
     }
-    num = numStr.split('').reverse();
-    _.forEach(num, function(val, idx){
+    dotIdx = numStr.indexOf('.');
+    if(dotIdx !== -1){
+      splitNumber = numStr.split('.');
+      numStr = splitNumber[0];
+      mantissa = splitNumber[1];
+    }
+    numStr = numStr.split('').reverse();
+    _.forEach(numStr, function(val, idx, arr){
       newNum.push(val)
-      if((idx+1)%3 == 0){
+      if((idx+1)%3 == 0 && idx != arr.length-1){
         newNum.push(',');
       }
     });
-
-    return newNum.reverse().join('');
+    newNum = newNum.reverse().join('')
+    if(dotIdx !== -1){
+      newNum = [newNum, mantissa].join('.');
+    }
+    return newNum;
   }
 
   function isValidTestId(testId){

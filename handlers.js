@@ -41,4 +41,9 @@
     _.reverse(data);
   }
 
+  /*
+    TODO:
+      > reduce
+  */
+
 })();
